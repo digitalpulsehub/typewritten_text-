@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Search | Minimalist Instagram Style</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📸</text></svg>">
+<link type="text/css" rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo-container">
+                <i class="fas fa-camera logo-icon"></i>
+                <h1 class="logo-text">ImageSearch</h1>
+            </div>
+            <p class="tagline">Discover beautiful horizontal images</p>
+            <div class="purpose-note">
+                <i class="fas fa-info-circle"></i>
+                <span>All images are horizontal format for Instagram posts. Ready for immediate download.</span>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <section class="search-section">
+                <div class="search-container">
+                    <div class="search-input-wrapper">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="searchInput" class="search-input" placeholder="Search for images (e.g., Italy, Rome, mountain, sea)...">
+                        <button id="searchButton" class="search-button">
+                            <i class="fas fa-search"></i>
+                            <span>Search</span>
+                        </button>
+                    </div>
+                    <div class="suggestions">
+                        <span class="suggestion-title">Try:</span>
+                        <button class="suggestion-tag" data-keyword="Italy">Italy</button>
+                        <button class="suggestion-tag" data-keyword="Rome">Rome</button>
+                        <button class="suggestion-tag" data-keyword="mountain">Mountain</button>
+                        <button class="suggestion-tag" data-keyword="sea">Sea</button>
+                        <button class="suggestion-tag" data-keyword="travel">Travel</button>
+                        <button class="suggestion-tag" data-keyword="city">City</button>
+                    </div>
+                    <div class="format-note">
+                        <i class="fas fa-mobile-alt"></i>
+                        <span>Horizontal images optimized for Instagram feed posts</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="results-section">
+                <div class="results-header">
+                    <h2 id="resultsTitle">Popular Images</h2>
+                    <div class="results-count">
+                        <span id="resultsCount">0</span> horizontal images
+                    </div>
+                </div>
+                
+                <div class="loading-indicator" id="loadingIndicator">
+                    <div class="loading-spinner"></div>
+                    <p>Loading horizontal images...</p>
+                </div>
+                
+                <div class="images-grid" id="imagesGrid">
+                    <!-- Images will be loaded here dynamically -->
+                </div>
+                
+                <div class="no-results" id="noResults">
+                    <i class="fas fa-image no-results-icon"></i>
+                    <h3>No horizontal images found</h3>
+                    <p>Try searching for different keywords or check your internet connection</p>
+                </div>
+                
+                <div class="load-more-container">
+                    <button id="loadMoreButton" class="load-more-button">
+                        <i class="fas fa-sync-alt"></i>
+                        Load More Horizontal Images
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="api-credit">
+                    <p>Images sourced from Unsplash</p>
+                    <p class="attribution-note">All images are in horizontal format for Instagram. Credit photographers when used.</p>
+                </div>
+                <div class="footer-info">
+                    <p>Professional Instagram Image Search</p>
+                    <p class="footer-note">Minimalist design • Horizontal format only • Immediate download</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Image Modal for full view -->
+    <div class="modal" id="imageModal">
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-image-container">
+                <img id="modalImage" src="" alt="Full size image">
+            </div>
+            <div class="modal-info">
+                <div class="photographer-info">
+                    <i class="fas fa-user-circle"></i>
+                    <div>
+                        <h3 id="photographerName">Photographer</h3>
+                        <p class="photographer-credit">Credit: <span id="photographerCredit">Photographer Name</span></p>
+                    </div>
+                </div>
+                <div class="image-description">
+                    <p id="imageDescription">No description available</p>
+                </div>
+                <div class="image-specs">
+                    <div class="spec-item">
+                        <i class="fas fa-arrows-alt-h"></i>
+                        <span>Horizontal Format</span>
+                    </div>
+                    <div class="spec-item">
+                        <i class="fas fa-download"></i>
+                        <span>Ready to Download</span>
+                    </div>
+                    <div class="spec-item">
+                        <i class="fab fa-instagram"></i>
+                        <span>Instagram Ready</span>
+                    </div>
+                </div>
+                <div class="download-info">
+                    <button id="downloadButton" class="download-button">
+                        <i class="fas fa-download"></i> Download Image Now
+                    </button>
+                    <p class="download-note">Click to download immediately for Instagram posts</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <!-- Using the Unsplash JS SDK from CDN -->
+    <script src="https://unpkg.com/unsplash-js@7.0.18/dist/unsplash-js.min.js"></script>
+    <script src="script.js"></script>
+<script type="text/javascript" src="js/script.js"></script>
+</body>
+</html>
