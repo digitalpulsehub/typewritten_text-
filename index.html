@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,10 +14,10 @@
                 <span class="dot">●</span>
                 <h1>Typewritten Text</h1>
             </div>
-            <div class="actions">
-                <button id="shareBtn" class="btn" disabled>
-                    Crea link
-                </button>
+            <div class="stats">
+                <span id="charCount">0 characters</span>
+                <span id="wordCount">0 words</span>
+                <span id="viewCount" class="hidden">0 views</span>
             </div>
         </header>
 
@@ -25,37 +25,92 @@
             <input type="text" 
                    id="titleInput" 
                    class="title-input" 
-                   placeholder="Titolo (opzionale)" 
+                   placeholder="Title (optional)" 
                    maxlength="100">
             
             <div class="editor-tools">
-                <button class="tool-btn" data-command="bold" title="Grassetto">B</button>
-                <button class="tool-btn" data-command="italic" title="Corsivo">I</button>
-                <button class="tool-btn" data-command="underline" title="Sottolineato">U</button>
-                <button class="tool-btn" data-command="insertUnorderedList" title="Elenco puntato">•</button>
+                <button class="tool-btn" data-command="bold" title="Bold">B</button>
+                <button class="tool-btn" data-command="italic" title="Italic">I</button>
+                <button class="tool-btn" data-command="underline" title="Underline">U</button>
+                <button class="tool-btn" data-command="insertUnorderedList" title="Bullet List">•</button>
+                <button class="tool-btn" data-command="insertOrderedList" title="Numbered List">1.</button>
             </div>
             
             <div id="editor" 
                  class="text-editor" 
                  contenteditable="true" 
-                 placeholder="Scrivi il tuo comunicato qui..."></div>
+                 placeholder="Write your announcement here..."></div>
             
+            <div class="password-section">
+                <label for="passwordInput">Password protection (optional):</label>
+                <input type="password" 
+                       id="passwordInput" 
+                       class="password-input" 
+                       placeholder="Set a password to protect this document">
+                <div class="password-toggle">
+                    <input type="checkbox" id="showPassword">
+                    <label for="showPassword">Show password</label>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button id="shareBtn" class="btn share-btn" disabled>
+                    Create Shareable Link
+                </button>
+                <button id="clearBtn" class="btn clear-btn">
+                    Clear Document
+                </button>
+            </div>
+
             <div class="info">
-                <p>Il testo viene salvato automaticamente nel tuo browser</p>
+                <p>Text is automatically saved in your browser. Share the link to let others view it.</p>
             </div>
         </main>
 
         <div id="linkContainer" class="link-container hidden">
             <div class="link-box">
-                <p>Condividi questo link:</p>
+                <h3>Shareable Link Created</h3>
+                <p>Copy this link to share your document:</p>
                 <div class="link-row">
                     <input type="text" 
                            id="generatedLink" 
                            class="link-input" 
                            readonly>
-                    <button id="copyBtn" class="copy-btn">Copia</button>
+                    <button id="copyBtn" class="copy-btn">Copy Link</button>
                 </div>
-                <p class="note">Nota: Il link funziona solo su questo dispositivo e browser</p>
+                <div class="link-info">
+                    <p><strong>Note:</strong> This link works on any device with internet access</p>
+                    <p><strong>Password Protected:</strong> <span id="passwordStatus">No</span></p>
+                    <p><strong>Link expires:</strong> Never (stored locally in your browser)</p>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <p>Created with</p>
+                <div class="tech-icons">
+                    <span class="tech-icon html-icon" title="HTML5">HTML</span>
+                    <span class="tech-icon css-icon" title="CSS3">CSS</span>
+                    <span class="tech-icon js-icon" title="JavaScript">JS</span>
+                </div>
+                <p class="footer-note">Typewritten Text - Minimalist text sharing platform</p>
+            </div>
+        </footer>
+
+        <div id="passwordPrompt" class="password-prompt hidden">
+            <div class="prompt-content">
+                <h3>Password Required</h3>
+                <p>This document is protected with a password.</p>
+                <input type="password" 
+                       id="accessPassword" 
+                       class="password-input" 
+                       placeholder="Enter password">
+                <div class="prompt-actions">
+                    <button id="submitPassword" class="btn">Access Document</button>
+                    <button id="cancelPassword" class="btn cancel-btn">Cancel</button>
+                </div>
+                <p class="error-msg" id="passwordError"></p>
             </div>
         </div>
 
