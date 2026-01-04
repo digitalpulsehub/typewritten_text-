@@ -15,9 +15,18 @@
                 <h1>Typewritten Text</h1>
             </div>
             <div class="stats">
-                <span id="charCount">0 characters</span>
-                <span id="wordCount">0 words</span>
-                <span id="viewCount" class="hidden">0 views</span>
+                <span id="charCount" class="stat-item">
+                    <span class="stat-icon">📄</span> 
+                    <span class="stat-value">0 characters</span>
+                </span>
+                <span id="wordCount" class="stat-item">
+                    <span class="stat-icon">📝</span>
+                    <span class="stat-value">0 words</span>
+                </span>
+                <span id="viewCount" class="stat-item hidden">
+                    <span class="stat-icon">👁️</span>
+                    <span class="stat-value">0 views</span>
+                </span>
             </div>
         </header>
 
@@ -29,90 +38,95 @@
                    maxlength="100">
             
             <div class="editor-tools">
-                <button class="tool-btn" data-command="bold" title="Bold">B</button>
-                <button class="tool-btn" data-command="italic" title="Italic">I</button>
-                <button class="tool-btn" data-command="underline" title="Underline">U</button>
-                <button class="tool-btn" data-command="insertUnorderedList" title="Bullet List">•</button>
-                <button class="tool-btn" data-command="insertOrderedList" title="Numbered List">1.</button>
+                <button class="tool-btn" data-command="bold" title="Bold">
+                    <span class="tool-icon">B</span>
+                </button>
+                <button class="tool-btn" data-command="italic" title="Italic">
+                    <span class="tool-icon">I</span>
+                </button>
+                <button class="tool-btn" data-command="underline" title="Underline">
+                    <span class="tool-icon">U</span>
+                </button>
+                <button class="tool-btn" data-command="insertUnorderedList" title="Bullet List">
+                    <span class="tool-icon">•</span>
+                </button>
+                <button class="tool-btn" data-command="insertOrderedList" title="Numbered List">
+                    <span class="tool-icon">1.</span>
+                </button>
+                <button class="tool-btn" data-command="formatBlock" data-value="blockquote" title="Quote">
+                    <span class="tool-icon">❝</span>
+                </button>
             </div>
             
             <div id="editor" 
                  class="text-editor" 
                  contenteditable="true" 
                  placeholder="Write your announcement here..."></div>
-            
-            <div class="password-section">
-                <label for="passwordInput">Password protection (optional):</label>
-                <input type="password" 
-                       id="passwordInput" 
-                       class="password-input" 
-                       placeholder="Set a password to protect this document">
-                <div class="password-toggle">
-                    <input type="checkbox" id="showPassword">
-                    <label for="showPassword">Show password</label>
-                </div>
-            </div>
 
             <div class="actions">
                 <button id="shareBtn" class="btn share-btn" disabled>
+                    <span class="btn-icon">🔗</span>
                     Create Shareable Link
                 </button>
                 <button id="clearBtn" class="btn clear-btn">
+                    <span class="btn-icon">🗑️</span>
                     Clear Document
+                </button>
+                <button id="saveDraftBtn" class="btn draft-btn">
+                    <span class="btn-icon">💾</span>
+                    Save Draft
                 </button>
             </div>
 
             <div class="info">
-                <p>Text is automatically saved in your browser. Share the link to let others view it.</p>
+                <p>• Text is automatically saved in your browser • Share the link to let others view it • F5 reloads without clearing</p>
             </div>
         </main>
 
         <div id="linkContainer" class="link-container hidden">
             <div class="link-box">
-                <h3>Shareable Link Created</h3>
+                <h3>✨ Shareable Link Created</h3>
                 <p>Copy this link to share your document:</p>
                 <div class="link-row">
                     <input type="text" 
                            id="generatedLink" 
                            class="link-input" 
                            readonly>
-                    <button id="copyBtn" class="copy-btn">Copy Link</button>
+                    <button id="copyBtn" class="copy-btn">
+                        <span class="btn-icon">📋</span>
+                        Copy Link
+                    </button>
                 </div>
                 <div class="link-info">
-                    <p><strong>Note:</strong> This link works on any device with internet access</p>
-                    <p><strong>Password Protected:</strong> <span id="passwordStatus">No</span></p>
-                    <p><strong>Link expires:</strong> Never (stored locally in your browser)</p>
+                    <p><strong>📊 Views:</strong> <span id="linkViews">0</span></p>
+                    <p><strong>🔗 Link works on:</strong> Any device with this link</p>
+                    <p><strong>💾 Storage:</strong> Stored locally in your browser</p>
                 </div>
             </div>
         </div>
 
         <footer class="footer">
             <div class="footer-content">
-                <p>Created with</p>
-                <div class="tech-icons">
-                    <span class="tech-icon html-icon" title="HTML5">HTML</span>
-                    <span class="tech-icon css-icon" title="CSS3">CSS</span>
-                    <span class="tech-icon js-icon" title="JavaScript">JS</span>
+                <div class="tech-stack">
+                    <span class="tech-title">Built with</span>
+                    <div class="tech-icons">
+                        <div class="tech-icon" title="HTML5">
+                            <span class="icon-text">HTML</span>
+                            <span class="icon-dot"></span>
+                        </div>
+                        <div class="tech-icon" title="CSS3">
+                            <span class="icon-text">CSS</span>
+                            <span class="icon-dot"></span>
+                        </div>
+                        <div class="tech-icon" title="JavaScript">
+                            <span class="icon-text">JS</span>
+                            <span class="icon-dot"></span>
+                        </div>
+                    </div>
                 </div>
-                <p class="footer-note">Typewritten Text - Minimalist text sharing platform</p>
+                <p class="footer-note">Typewritten Text • Minimalist text sharing platform</p>
             </div>
         </footer>
-
-        <div id="passwordPrompt" class="password-prompt hidden">
-            <div class="prompt-content">
-                <h3>Password Required</h3>
-                <p>This document is protected with a password.</p>
-                <input type="password" 
-                       id="accessPassword" 
-                       class="password-input" 
-                       placeholder="Enter password">
-                <div class="prompt-actions">
-                    <button id="submitPassword" class="btn">Access Document</button>
-                    <button id="cancelPassword" class="btn cancel-btn">Cancel</button>
-                </div>
-                <p class="error-msg" id="passwordError"></p>
-            </div>
-        </div>
 
         <div id="toast" class="toast"></div>
     </div>
