@@ -1,425 +1,333 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Georgia', serif;
-    line-height: 1.6;
-    color: #333;
-    background-color: #fff;
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-.container {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
-
-/* Header */
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 0;
-    border-bottom: 1px solid #e0e0e0;
-    margin-bottom: 30px;
-}
-
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.dot {
-    font-size: 24px;
-    color: #000;
-}
-
-h1 {
-    font-size: 24px;
-    font-weight: normal;
-}
-
-.stats {
-    display: flex;
-    gap: 20px;
-    font-size: 14px;
-    color: #666;
-}
-
-/* Editor */
-.title-input {
-    width: 100%;
-    font-size: 32px;
-    font-weight: bold;
-    border: none;
-    outline: none;
-    margin-bottom: 20px;
-    font-family: inherit;
-    padding: 10px 0;
-}
-
-.title-input::placeholder {
-    color: #999;
-    font-weight: normal;
-}
-
-.editor-tools {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #eee;
-}
-
-.tool-btn {
-    background: none;
-    border: 1px solid #ddd;
-    padding: 5px 12px;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: 14px;
-    border-radius: 3px;
-    font-weight: bold;
-}
-
-.tool-btn:hover {
-    background: #f5f5f5;
-}
-
-.text-editor {
-    min-height: 400px;
-    font-size: 18px;
-    line-height: 1.8;
-    outline: none;
-    padding: 20px 0;
-    border-bottom: 1px solid #eee;
-}
-
-.text-editor:empty:before {
-    content: attr(placeholder);
-    color: #999;
-}
-
-/* Password Section */
-.password-section {
-    margin: 20px 0;
-    padding: 20px;
-    background: #f9f9f9;
-    border-radius: 5px;
-}
-
-.password-section label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 500;
-}
-
-.password-input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 3px;
-    font-family: inherit;
-    font-size: 14px;
-    margin-bottom: 10px;
-}
-
-.password-toggle {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
-}
-
-/* Actions */
-.actions {
-    display: flex;
-    gap: 15px;
-    margin: 20px 0;
-}
-
-.btn {
-    background: #000;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    font-size: 14px;
-    cursor: pointer;
-    font-family: inherit;
-    transition: opacity 0.2s;
-    border-radius: 3px;
-}
-
-.btn:hover:not(:disabled) {
-    opacity: 0.8;
-}
-
-.btn:disabled {
-    background: #666;
-    cursor: not-allowed;
-}
-
-.share-btn {
-    flex: 2;
-}
-
-.clear-btn {
-    flex: 1;
-    background: #666;
-}
-
-/* Link Container */
-.link-container {
-    margin: 40px 0;
-    padding: 30px;
-    background: #f9f9f9;
-    border-radius: 5px;
-    animation: fadeIn 0.3s ease;
-}
-
-.link-box h3 {
-    margin-bottom: 15px;
-    font-weight: normal;
-}
-
-.link-box p {
-    margin-bottom: 15px;
-    color: #333;
-}
-
-.link-row {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-.link-input {
-    flex: 1;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 3px;
-    font-family: monospace;
-    font-size: 14px;
-    background: white;
-}
-
-.copy-btn {
-    background: #000;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    cursor: pointer;
-    border-radius: 3px;
-    font-family: inherit;
-    white-space: nowrap;
-}
-
-.copy-btn:hover {
-    opacity: 0.8;
-}
-
-.link-info {
-    background: white;
-    padding: 15px;
-    border-radius: 3px;
-    border-left: 4px solid #000;
-}
-
-.link-info p {
-    margin-bottom: 8px;
-    font-size: 14px;
-}
-
-.link-info strong {
-    color: #000;
-}
-
-/* Footer */
-.footer {
-    margin-top: auto;
-    padding-top: 40px;
-    text-align: center;
-    color: #666;
-    font-size: 14px;
-    border-top: 1px solid #eee;
-}
-
-.footer-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-}
-
-.tech-icons {
-    display: flex;
-    gap: 20px;
-    margin: 10px 0;
-}
-
-.tech-icon {
-    font-family: 'Courier New', monospace;
-    font-weight: bold;
-    padding: 5px 10px;
-    border-radius: 3px;
-    font-size: 12px;
-    letter-spacing: 1px;
-}
-
-.html-icon {
-    background: #000;
-    color: white;
-}
-
-.css-icon {
-    background: #fff;
-    color: #000;
-    border: 2px solid #000;
-}
-
-.js-icon {
-    background: #fff;
-    color: #000;
-    border: 2px solid #000;
-}
-
-.footer-note {
-    font-style: italic;
-    color: #888;
-}
-
-/* Password Prompt */
-.password-prompt {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.prompt-content {
-    background: white;
-    padding: 40px;
-    border-radius: 5px;
-    max-width: 400px;
-    width: 90%;
-}
-
-.prompt-content h3 {
-    margin-bottom: 15px;
-    font-weight: normal;
-}
-
-.prompt-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-.cancel-btn {
-    background: #666;
-}
-
-.error-msg {
-    color: #d32f2f;
-    margin-top: 10px;
-    font-size: 14px;
-    min-height: 20px;
-}
-
-/* Toast */
-.toast {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: #000;
-    color: white;
-    padding: 12px 24px;
-    border-radius: 3px;
-    opacity: 0;
-    transform: translateY(10px);
-    transition: all 0.3s ease;
-    z-index: 1001;
-}
-
-.toast.show {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* Info */
-.info {
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px solid #eee;
-    color: #666;
-    font-size: 14px;
-}
-
-/* Utility */
-.hidden {
-    display: none;
-}
-
-/* Animations */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Responsive */
-@media (max-width: 600px) {
-    body {
-        padding: 10px;
+class TypewrittenText {
+    constructor() {
+        this.editor = document.getElementById('editor');
+        this.titleInput = document.getElementById('titleInput');
+        this.passwordInput = document.getElementById('passwordInput');
+        this.accessPassword = document.getElementById('accessPassword');
+        this.showPassword = document.getElementById('showPassword');
+        this.shareBtn = document.getElementById('shareBtn');
+        this.clearBtn = document.getElementById('clearBtn');
+        this.linkContainer = document.getElementById('linkContainer');
+        this.generatedLink = document.getElementById('generatedLink');
+        this.copyBtn = document.getElementById('copyBtn');
+        this.passwordPrompt = document.getElementById('passwordPrompt');
+        this.submitPassword = document.getElementById('submitPassword');
+        this.cancelPassword = document.getElementById('cancelPassword');
+        this.passwordError = document.getElementById('passwordError');
+        this.passwordStatus = document.getElementById('passwordStatus');
+        this.charCount = document.getElementById('charCount');
+        this.wordCount = document.getElementById('wordCount');
+        this.viewCount = document.getElementById('viewCount');
+        this.toast = document.getElementById('toast');
+        
+        this.currentDocumentId = null;
+        this.autoSaveInterval = 3000;
+        this.storageKey = 'typewritten_draft';
+        
+        this.init();
     }
     
-    .header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 15px;
+    init() {
+        this.setupEventListeners();
+        this.loadFromStorage();
+        this.checkUrlHash();
+        this.startAutoSave();
+        this.updateCounters();
     }
     
-    .stats {
-        width: 100%;
-        justify-content: space-between;
+    setupEventListeners() {
+        // Editor events
+        this.editor.addEventListener('input', () => {
+            this.updateCounters();
+            this.updateShareButton();
+            this.saveToStorage();
+        });
+        
+        this.titleInput.addEventListener('input', () => {
+            this.updateShareButton();
+            this.saveToStorage();
+        });
+        
+        // Password toggle
+        this.showPassword.addEventListener('change', (e) => {
+            this.passwordInput.type = e.target.checked ? 'text' : 'password';
+        });
+        
+        // Toolbar
+        document.querySelectorAll('.tool-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const command = e.target.dataset.command;
+                document.execCommand(command, false, null);
+                this.editor.focus();
+            });
+        });
+        
+        // Buttons
+        this.shareBtn.addEventListener('click', () => this.generateLink());
+        this.clearBtn.addEventListener('click', () => this.clearDocument());
+        this.copyBtn.addEventListener('click', () => this.copyLink());
+        this.submitPassword.addEventListener('click', () => this.checkPassword());
+        this.cancelPassword.addEventListener('click', () => this.closePasswordPrompt());
+        
+        // Password prompt enter key
+        this.accessPassword.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') this.checkPassword();
+        });
+        
+        // Prevent paste with formatting
+        this.editor.addEventListener('paste', (e) => {
+            e.preventDefault();
+            const text = e.clipboardData.getData('text/plain');
+            document.execCommand('insertText', false, text);
+        });
     }
     
-    .title-input {
-        font-size: 24px;
+    updateCounters() {
+        const text = this.editor.textContent;
+        const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+        const chars = text.length;
+        
+        this.charCount.textContent = `${chars} character${chars !== 1 ? 's' : ''}`;
+        this.wordCount.textContent = `${words} word${words !== 1 ? 's' : ''}`;
     }
     
-    .text-editor {
-        font-size: 16px;
-        min-height: 300px;
+    updateViews(documentId) {
+        if (!documentId) return;
+        
+        const data = localStorage.getItem(`post_${documentId}`);
+        if (data) {
+            try {
+                const parsed = JSON.parse(data);
+                parsed.views = (parsed.views || 0) + 1;
+                localStorage.setItem(`post_${documentId}`, JSON.stringify(parsed));
+                
+                // Update view counter if viewing this document
+                if (this.currentDocumentId === documentId) {
+                    this.viewCount.textContent = `${parsed.views} view${parsed.views !== 1 ? 's' : ''}`;
+                    this.viewCount.classList.remove('hidden');
+                }
+            } catch (e) {
+                console.error('Error updating views:', e);
+            }
+        }
     }
     
-    .link-row {
-        flex-direction: column;
+    saveToStorage() {
+        const data = {
+            title: this.titleInput.value,
+            content: this.editor.innerHTML,
+            timestamp: Date.now()
+        };
+        localStorage.setItem(this.storageKey, JSON.stringify(data));
     }
     
-    .actions {
-        flex-direction: column;
+    loadFromStorage() {
+        const saved = localStorage.getItem(this.storageKey);
+        if (saved) {
+            try {
+                const data = JSON.parse(saved);
+                this.titleInput.value = data.title || '';
+                this.editor.innerHTML = data.content || '';
+                this.showToast('Draft loaded from local storage');
+            } catch (e) {
+                console.error('Error loading draft:', e);
+            }
+        }
     }
     
-    .tech-icons {
-        gap: 10px;
+    startAutoSave() {
+        setInterval(() => {
+            this.saveToStorage();
+        }, this.autoSaveInterval);
+    }
+    
+    updateShareButton() {
+        const hasContent = this.editor.textContent.trim().length > 0;
+        this.shareBtn.disabled = !hasContent;
+    }
+    
+    generateLink() {
+        const title = this.titleInput.value.trim();
+        const content = this.editor.innerHTML;
+        const password = this.passwordInput.value.trim();
+        
+        // Generate unique ID
+        const id = this.generateId();
+        
+        // Prepare data
+        const data = {
+            title: title,
+            content: content,
+            timestamp: Date.now(),
+            password: password || null,
+            views: 0,
+            protected: !!password
+        };
+        
+        // Store document
+        localStorage.setItem(`post_${id}`, JSON.stringify(data));
+        
+        // Build URL
+        const baseUrl = window.location.origin + window.location.pathname;
+        const url = `${baseUrl}#${id}`;
+        
+        // Show link
+        this.generatedLink.value = url;
+        this.passwordStatus.textContent = password ? 'Yes' : 'No';
+        this.linkContainer.classList.remove('hidden');
+        
+        // Clear password field for next use
+        this.passwordInput.value = '';
+        
+        // Scroll to link
+        this.linkContainer.scrollIntoView({ behavior: 'smooth' });
+        
+        this.showToast('Shareable link created!');
+    }
+    
+    generateId() {
+        return Math.random().toString(36).substring(2) + Date.now().toString(36);
+    }
+    
+    checkUrlHash() {
+        const hash = window.location.hash.substring(1);
+        if (hash && hash.length > 10) {
+            this.currentDocumentId = hash;
+            this.loadDocument(hash);
+        }
+    }
+    
+    loadDocument(id) {
+        const data = localStorage.getItem(`post_${id}`);
+        if (!data) {
+            this.showToast('Document not found', true);
+            return;
+        }
+        
+        try {
+            const parsed = JSON.parse(data);
+            
+            // Check if password protected
+            if (parsed.password) {
+                this.showPasswordPrompt();
+                return;
+            }
+            
+            // Load content
+            this.titleInput.value = parsed.title || '';
+            this.editor.innerHTML = parsed.content || '';
+            this.updateCounters();
+            this.updateViews(id);
+            this.showToast('Document loaded from link');
+            
+            // Disable editing when viewing shared document
+            this.editor.setAttribute('contenteditable', 'false');
+            this.titleInput.disabled = true;
+            this.shareBtn.disabled = true;
+            
+        } catch (e) {
+            console.error('Error loading document:', e);
+            this.showToast('Error loading document', true);
+        }
+    }
+    
+    showPasswordPrompt() {
+        this.passwordPrompt.classList.remove('hidden');
+        this.accessPassword.focus();
+    }
+    
+    closePasswordPrompt() {
+        this.passwordPrompt.classList.add('hidden');
+        this.accessPassword.value = '';
+        this.passwordError.textContent = '';
+    }
+    
+    checkPassword() {
+        const password = this.accessPassword.value.trim();
+        const data = localStorage.getItem(`post_${this.currentDocumentId}`);
+        
+        if (!data) {
+            this.passwordError.textContent = 'Document not found';
+            return;
+        }
+        
+        try {
+            const parsed = JSON.parse(data);
+            
+            if (parsed.password === password) {
+                // Password correct
+                this.titleInput.value = parsed.title || '';
+                this.editor.innerHTML = parsed.content || '';
+                this.updateCounters();
+                this.updateViews(this.currentDocumentId);
+                this.closePasswordPrompt();
+                
+                // Disable editing
+                this.editor.setAttribute('contenteditable', 'false');
+                this.titleInput.disabled = true;
+                this.shareBtn.disabled = true;
+                
+                this.showToast('Password accepted - Document loaded');
+            } else {
+                this.passwordError.textContent = 'Incorrect password. Please try again.';
+                this.accessPassword.value = '';
+                this.accessPassword.focus();
+            }
+        } catch (e) {
+            this.passwordError.textContent = 'Error accessing document';
+        }
+    }
+    
+    copyLink() {
+        this.generatedLink.select();
+        this.generatedLink.setSelectionRange(0, 99999);
+        
+        try {
+            navigator.clipboard.writeText(this.generatedLink.value);
+            this.showToast('Link copied to clipboard!');
+        } catch (err) {
+            document.execCommand('copy');
+            this.showToast('Link copied!');
+        }
+    }
+    
+    clearDocument() {
+        if (confirm('Are you sure you want to clear the current document? This cannot be undone.')) {
+            this.titleInput.value = '';
+            this.editor.innerHTML = '';
+            this.passwordInput.value = '';
+            this.linkContainer.classList.add('hidden');
+            localStorage.removeItem(this.storageKey);
+            this.updateCounters();
+            this.updateShareButton();
+            
+            // Re-enable editing if it was disabled
+            this.editor.setAttribute('contenteditable', 'true');
+            this.titleInput.disabled = false;
+            this.shareBtn.disabled = false;
+            
+            // Clear URL hash
+            window.location.hash = '';
+            this.currentDocumentId = null;
+            this.viewCount.classList.add('hidden');
+            
+            this.showToast('Document cleared');
+        }
+    }
+    
+    showToast(message, isError = false) {
+        this.toast.textContent = message;
+        this.toast.style.background = isError ? '#d32f2f' : '#000';
+        this.toast.classList.add('show');
+        
+        setTimeout(() => {
+            this.toast.classList.remove('show');
+        }, 3000);
     }
 }
+
+// Initialize the app
+document.addEventListener('DOMContentLoaded', () => {
+    new TypewrittenText();
+});
