@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Typewritten Text</title>
+    <title>Typewritten</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>●</text></svg>">
 </head>
@@ -12,20 +12,17 @@
         <header class="header">
             <div class="logo">
                 <span class="dot">●</span>
-                <h1>Typewritten Text</h1>
+                <h1>typewritten</h1>
             </div>
             <div class="stats">
                 <span id="charCount" class="stat-item">
-                    <span class="stat-icon">📄</span> 
-                    <span class="stat-value">0 characters</span>
+                    <span id="charValue">0</span>
                 </span>
                 <span id="wordCount" class="stat-item">
-                    <span class="stat-icon">📝</span>
-                    <span class="stat-value">0 words</span>
+                    <span id="wordValue">0</span>
                 </span>
                 <span id="viewCount" class="stat-item hidden">
-                    <span class="stat-icon">👁️</span>
-                    <span class="stat-value">0 views</span>
+                    <span id="viewValue">0</span>
                 </span>
             </div>
         </header>
@@ -34,97 +31,83 @@
             <input type="text" 
                    id="titleInput" 
                    class="title-input" 
-                   placeholder="Title (optional)" 
-                   maxlength="100">
+                   placeholder="Title" 
+                   maxlength="80">
             
             <div class="editor-tools">
                 <button class="tool-btn" data-command="bold" title="Bold">
-                    <span class="tool-icon">B</span>
+                    <span class="tool-char">B</span>
                 </button>
                 <button class="tool-btn" data-command="italic" title="Italic">
-                    <span class="tool-icon">I</span>
+                    <span class="tool-char">I</span>
                 </button>
                 <button class="tool-btn" data-command="underline" title="Underline">
-                    <span class="tool-icon">U</span>
+                    <span class="tool-char">U</span>
                 </button>
-                <button class="tool-btn" data-command="insertUnorderedList" title="Bullet List">
-                    <span class="tool-icon">•</span>
+                <span class="tool-divider">|</span>
+                <button class="tool-btn" data-command="insertUnorderedList" title="List">
+                    <span class="tool-char">•</span>
                 </button>
-                <button class="tool-btn" data-command="insertOrderedList" title="Numbered List">
-                    <span class="tool-icon">1.</span>
-                </button>
-                <button class="tool-btn" data-command="formatBlock" data-value="blockquote" title="Quote">
-                    <span class="tool-icon">❝</span>
+                <button class="tool-btn" data-command="insertOrderedList" title="Numbers">
+                    <span class="tool-char">1.</span>
                 </button>
             </div>
             
             <div id="editor" 
                  class="text-editor" 
                  contenteditable="true" 
-                 placeholder="Write your announcement here..."></div>
+                 placeholder="Start writing..."></div>
 
             <div class="actions">
                 <button id="shareBtn" class="btn share-btn" disabled>
-                    <span class="btn-icon">🔗</span>
-                    Create Shareable Link
+                    Create link
+                </button>
+                <button id="refreshBtn" class="btn refresh-btn">
+                    Refresh
                 </button>
                 <button id="clearBtn" class="btn clear-btn">
-                    <span class="btn-icon">🗑️</span>
-                    Clear Document
-                </button>
-                <button id="saveDraftBtn" class="btn draft-btn">
-                    <span class="btn-icon">💾</span>
-                    Save Draft
+                    Clear
                 </button>
             </div>
 
             <div class="info">
-                <p>• Text is automatically saved in your browser • Share the link to let others view it • F5 reloads without clearing</p>
+                <p>Auto-saved locally • Share link to publish • Refresh preserves text</p>
             </div>
         </main>
 
         <div id="linkContainer" class="link-container hidden">
             <div class="link-box">
-                <h3>✨ Shareable Link Created</h3>
-                <p>Copy this link to share your document:</p>
+                <div class="link-header">
+                    <h3>Share link</h3>
+                    <span class="link-stats">
+                        <span class="stat-label">Views:</span>
+                        <span id="linkViews">0</span>
+                    </span>
+                </div>
                 <div class="link-row">
                     <input type="text" 
                            id="generatedLink" 
                            class="link-input" 
                            readonly>
-                    <button id="copyBtn" class="copy-btn">
-                        <span class="btn-icon">📋</span>
-                        Copy Link
-                    </button>
+                    <button id="copyBtn" class="copy-btn">Copy</button>
                 </div>
-                <div class="link-info">
-                    <p><strong>📊 Views:</strong> <span id="linkViews">0</span></p>
-                    <p><strong>🔗 Link works on:</strong> Any device with this link</p>
-                    <p><strong>💾 Storage:</strong> Stored locally in your browser</p>
+                <div class="link-note">
+                    <p>Note: Link works on any device. Data stored in your browser.</p>
                 </div>
             </div>
         </div>
 
         <footer class="footer">
             <div class="footer-content">
-                <div class="tech-stack">
-                    <span class="tech-title">Built with</span>
-                    <div class="tech-icons">
-                        <div class="tech-icon" title="HTML5">
-                            <span class="icon-text">HTML</span>
-                            <span class="icon-dot"></span>
-                        </div>
-                        <div class="tech-icon" title="CSS3">
-                            <span class="icon-text">CSS</span>
-                            <span class="icon-dot"></span>
-                        </div>
-                        <div class="tech-icon" title="JavaScript">
-                            <span class="icon-text">JS</span>
-                            <span class="icon-dot"></span>
-                        </div>
-                    </div>
+                <div class="footer-text">
+                    <span>typewritten</span>
+                    <span class="divider">|</span>
+                    <span>html</span>
+                    <span class="divider">|</span>
+                    <span>css</span>
+                    <span class="divider">|</span>
+                    <span>javascript</span>
                 </div>
-                <p class="footer-note">Typewritten Text • Minimalist text sharing platform</p>
             </div>
         </footer>
 
