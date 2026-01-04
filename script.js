@@ -1,37 +1,31 @@
-class TypewrittenText {
+class Typewritten {
     constructor() {
-        this.initializeElements();
+        this.initElements();
         this.setupEventListeners();
-        this.initializeApp();
+        this.initialize();
     }
     
-    initializeElements() {
+    initElements() {
         this.editor = document.getElementById('editor');
         this.titleInput = document.getElementById('titleInput');
         this.shareBtn = document.getElementById('shareBtn');
+        this.refreshBtn = document.getElementById('refreshBtn');
         this.clearBtn = document.getElementById('clearBtn');
-        this.saveDraftBtn = document.getElementById('saveDraftBtn');
         this.linkContainer = document.getElementById('linkContainer');
         this.generatedLink = document.getElementById('generatedLink');
         this.copyBtn = document.getElementById('copyBtn');
         this.linkViews = document.getElementById('linkViews');
-        this.charCount = document.getElementById('charCount');
-        this.wordCount = document.getElementById('wordCount');
+        this.charValue = document.getElementById('charValue');
+        this.wordValue = document.getElementById('wordValue');
+        this.viewValue = document.getElementById('viewValue');
         this.viewCount = document.getElementById('viewCount');
         this.toast = document.getElementById('toast');
         
         this.currentDocumentId = null;
-        this.isViewingShared = false;
-        this.storageKey = 'typewritten_current_draft';
-        this.draftsKey = 'typewritten_drafts';
-        this.viewsKey = 'typewritten_views';
-        
-        // Prevent F5 from clearing by saving before unload
-        window.addEventListener('beforeunload', () => {
-            if (!this.isViewingShared) {
-                this.saveCurrentDraft();
-            }
-        });
+        this.isViewing = false;
+        this.storageKey = 'typewritten_draft';
+        this.autoSaveDelay = 1000;
+        this.autoSaveTimer = null;
     }
     
     setupEventListeners() {
@@ -39,65 +33,78 @@ class TypewrittenText {
         this.editor.addEventListener('input', () => {
             this.updateCounters();
             this.updateShareButton();
-            this.autoSaveDraft();
+            this.autoSave();
         });
         
         this.titleInput.addEventListener('input', () => {
             this.updateShareButton();
-            this.autoSaveDraft();
+            this.autoSave();
         });
         
         // Toolbar events
         document.querySelectorAll('.tool-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
-                const command = e.target.closest('.tool-btn').dataset.command;
-                const value = e.target.closest('.tool-btn').dataset.value;
-                
-                if (value) {
-                    document.execCommand(command, false, value);
-                } else {
-                    document.execCommand(command, false, null);
-                }
+                const command = e.currentTarget.dataset.command;
+                document.execCommand(command, false, null);
                 this.editor.focus();
-                this.updateCounters();
+                this.autoSave();
             });
         });
         
         // Button events
-        this.shareBtn.addEventListener('click', () => this.createShareableLink());
-        this.clearBtn.addEventListener('click', () => this.clearDocument());
-        this.saveDraftBtn.addEventListener('click', () => this.saveCurrentDraft());
-        this.copyBtn.addEventListener('click', () => this.copyLinkToClipboard());
+        this.shareBtn.addEventListener('click', () => this.createLink());
+        this.refreshBtn.addEventListener('click', () => this.handleRefresh());
+        this.clearBtn.addEventListener('click', () => this.handleClear());
+        this.copyBtn.addEventListener('click', () => this.copyLink());
         
-        // Prevent paste with formatting
+        // Paste handler
         this.editor.addEventListener('paste', (e) => {
             e.preventDefault();
             const text = e.clipboardData.getData('text/plain');
             document.execCommand('insertText', false, text);
             this.updateCounters();
+            this.autoSave();
         });
         
         // Handle URL hash changes
         window.addEventListener('hashchange', () => this.handleHashChange());
         
-        // Listen for F5/Ctrl+R to show warning
-        window.addEventListener('keydown', (e) => {
-            if ((e.key === 'F5') || (e.ctrlKey && e.key === 'r')) {
-                if (!this.isViewingShared) {
-                    this.saveCurrentDraft();
-                    this.showToast('Draft saved before refresh', false, 2000);
-                }
+        // Auto-save on page unload
+        window.addEventListener('beforeunload', () => {
+            if (!this.isViewing) {
+                this.saveDraft();
+            }
+        });
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            // Ctrl+S / Cmd+S to save
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                this.saveDraft();
+                this.showToast('Draft saved');
+            }
+            // F5 to refresh
+            if (e.key === 'F5') {
+                e.preventDefault();
+                this.handleRefresh();
             }
         });
     }
     
-    initializeApp() {
+    initialize() {
+        // Handle initial hash
         this.handleHashChange();
-        if (!this.isViewingShared) {
-            this.loadCurrentDraft();
+        
+        // Load draft if not viewing shared document
+        if (!this.isViewing) {
+            this.loadDraft();
         }
+        
+        // Update initial counters
         this.updateCounters();
+        this.updateShareButton();
     }
     
     handleHashChange() {
@@ -106,11 +113,10 @@ class TypewrittenText {
         if (hash && hash.length > 10) {
             this.currentDocumentId = hash;
             this.loadSharedDocument(hash);
-            this.isViewingShared = true;
+            this.isViewing = true;
         } else {
-            this.isViewingShared = false;
+            this.isViewing = false;
             this.enableEditing();
-            this.viewCount.classList.add('hidden');
         }
     }
     
@@ -119,8 +125,8 @@ class TypewrittenText {
         const words = text.trim() ? text.trim().split(/\s+/).length : 0;
         const chars = text.length;
         
-        this.charCount.querySelector('.stat-value').textContent = `${chars} characters`;
-        this.wordCount.querySelector('.stat-value').textContent = `${words} words`;
+        this.charValue.textContent = chars;
+        this.wordValue.textContent = words;
     }
     
     updateShareButton() {
@@ -128,44 +134,30 @@ class TypewrittenText {
         this.shareBtn.disabled = !hasContent;
     }
     
-    autoSaveDraft() {
-        if (this.autoSaveTimeout) {
-            clearTimeout(this.autoSaveTimeout);
+    autoSave() {
+        if (this.autoSaveTimer) {
+            clearTimeout(this.autoSaveTimer);
         }
         
-        this.autoSaveTimeout = setTimeout(() => {
-            if (!this.isViewingShared) {
-                this.saveCurrentDraft();
+        this.autoSaveTimer = setTimeout(() => {
+            if (!this.isViewing) {
+                this.saveDraft();
             }
-        }, 1000);
+        }, this.autoSaveDelay);
     }
     
-    saveCurrentDraft() {
+    saveDraft() {
         const draft = {
             title: this.titleInput.value,
             content: this.editor.innerHTML,
-            timestamp: Date.now(),
-            id: this.currentDocumentId || 'draft_' + Date.now()
+            timestamp: Date.now()
         };
         
         localStorage.setItem(this.storageKey, JSON.stringify(draft));
-        
-        // Save to drafts history
-        const drafts = JSON.parse(localStorage.getItem(this.draftsKey) || '[]');
-        drafts.unshift({
-            id: draft.id,
-            title: draft.title || 'Untitled',
-            timestamp: draft.timestamp,
-            preview: draft.content.substring(0, 100)
-        });
-        
-        // Keep only last 10 drafts
-        localStorage.setItem(this.draftsKey, JSON.stringify(drafts.slice(0, 10)));
-        
-        return draft.id;
+        return true;
     }
     
-    loadCurrentDraft() {
+    loadDraft() {
         const saved = localStorage.getItem(this.storageKey);
         if (saved) {
             try {
@@ -173,40 +165,86 @@ class TypewrittenText {
                 this.titleInput.value = draft.title || '';
                 this.editor.innerHTML = draft.content || '';
                 this.updateCounters();
-                this.showToast('Draft loaded', false, 2000);
             } catch (e) {
                 console.error('Error loading draft:', e);
             }
         }
     }
     
+    createLink() {
+        const title = this.titleInput.value.trim();
+        const content = this.editor.innerHTML;
+        
+        // Generate ID
+        const id = this.generateId();
+        
+        // Prepare document
+        const document = {
+            title: title,
+            content: content,
+            timestamp: Date.now(),
+            views: 0
+        };
+        
+        // Save document
+        localStorage.setItem(`doc_${id}`, JSON.stringify(document));
+        
+        // Build URL
+        const baseUrl = window.location.origin + window.location.pathname;
+        const url = `${baseUrl}#${id}`;
+        
+        // Display link
+        this.generatedLink.value = url;
+        this.linkViews.textContent = '0';
+        this.linkContainer.classList.remove('hidden');
+        
+        // Scroll to link
+        setTimeout(() => {
+            this.linkContainer.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+        
+        // Update current document
+        this.currentDocumentId = id;
+        this.updateViewCounter(0);
+        
+        this.showToast('Link created');
+    }
+    
+    generateId() {
+        const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+        let id = '';
+        for (let i = 0; i < 12; i++) {
+            id += chars[Math.floor(Math.random() * chars.length)];
+        }
+        return id;
+    }
+    
     loadSharedDocument(id) {
-        const data = localStorage.getItem(`post_${id}`);
+        const data = localStorage.getItem(`doc_${id}`);
         if (!data) {
             this.showToast('Document not found', true);
-            this.clearDocument();
             return;
         }
         
         try {
             const document = JSON.parse(data);
             
+            // Update view count
+            document.views = (document.views || 0) + 1;
+            localStorage.setItem(`doc_${id}`, JSON.stringify(document));
+            
             // Load content
             this.titleInput.value = document.title || '';
             this.editor.innerHTML = document.content || '';
-            
-            // Update view count
-            document.views = (document.views || 0) + 1;
-            localStorage.setItem(`post_${id}`, JSON.stringify(document));
             
             // Update counters
             this.updateCounters();
             this.updateViewCounter(document.views);
             
-            // Disable editing for shared documents
+            // Switch to view mode
             this.disableEditing();
             
-            this.showToast('Shared document loaded', false, 2000);
+            this.showToast('Loaded shared document');
             
         } catch (e) {
             console.error('Error loading document:', e);
@@ -215,7 +253,7 @@ class TypewrittenText {
     }
     
     updateViewCounter(views) {
-        this.viewCount.querySelector('.stat-value').textContent = `${views} views`;
+        this.viewValue.textContent = views;
         this.viewCount.classList.remove('hidden');
         if (this.linkViews) {
             this.linkViews.textContent = views;
@@ -227,8 +265,7 @@ class TypewrittenText {
         this.editor.classList.add('view-mode');
         this.titleInput.disabled = true;
         this.shareBtn.disabled = true;
-        this.clearBtn.textContent = 'Back to Editor';
-        this.clearBtn.querySelector('.btn-icon').textContent = '✏️';
+        this.clearBtn.textContent = 'New document';
     }
     
     enableEditing() {
@@ -236,74 +273,62 @@ class TypewrittenText {
         this.editor.classList.remove('view-mode');
         this.titleInput.disabled = false;
         this.shareBtn.disabled = false;
-        this.clearBtn.textContent = 'Clear Document';
-        this.clearBtn.querySelector('.btn-icon').textContent = '🗑️';
+        this.clearBtn.textContent = 'Clear';
+        this.viewCount.classList.add('hidden');
     }
     
-    createShareableLink() {
-        const title = this.titleInput.value.trim();
-        const content = this.editor.innerHTML;
-        
-        // Generate unique ID
-        const id = this.generateDocumentId();
-        
-        // Prepare document data
-        const document = {
-            title: title,
-            content: content,
-            timestamp: Date.now(),
-            views: 0
-        };
-        
-        // Store document
-        localStorage.setItem(`post_${id}`, JSON.stringify(document));
-        
-        // Build URL
-        const baseUrl = window.location.origin + window.location.pathname;
-        const url = `${baseUrl}#${id}`;
-        
-        // Display link
-        this.generatedLink.value = url;
-        this.linkViews.textContent = '0';
-        this.linkContainer.classList.remove('hidden');
-        
-        // Animate the link container
-        this.linkContainer.style.animation = 'none';
-        setTimeout(() => {
-            this.linkContainer.style.animation = 'fadeIn 0.3s ease';
-        }, 10);
-        
-        // Scroll to link container
-        this.linkContainer.scrollIntoView({ behavior: 'smooth' });
-        
-        // Update view counter for current session
-        this.currentDocumentId = id;
-        this.updateViewCounter(0);
-        
-        this.showToast('✅ Shareable link created!', false, 3000);
-    }
-    
-    generateDocumentId() {
-        const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-        let id = '';
-        for (let i = 0; i < 12; i++) {
-            id += chars[Math.floor(Math.random() * chars.length)];
+    handleRefresh() {
+        // Save current draft before refresh
+        if (!this.isViewing) {
+            this.saveDraft();
         }
-        return id + Date.now().toString(36);
+        
+        // Show toast message
+        this.showToast('Refreshing...');
+        
+        // Refresh after short delay to show toast
+        setTimeout(() => {
+            window.location.reload();
+        }, 300);
     }
     
-    copyLinkToClipboard() {
+    handleClear() {
+        if (this.isViewing) {
+            // Return to editor from view mode
+            window.location.hash = '';
+            this.isViewing = false;
+            this.enableEditing();
+            this.loadDraft();
+            this.showToast('Returned to editor');
+        } else {
+            // Clear current document
+            if (this.editor.textContent.trim() || this.titleInput.value.trim()) {
+                if (confirm('Clear current document?')) {
+                    this.titleInput.value = '';
+                    this.editor.innerHTML = '';
+                    this.linkContainer.classList.add('hidden');
+                    localStorage.removeItem(this.storageKey);
+                    this.updateCounters();
+                    this.updateShareButton();
+                    this.showToast('Document cleared');
+                }
+            }
+        }
+    }
+    
+    copyLink() {
         this.generatedLink.select();
         this.generatedLink.setSelectionRange(0, 99999);
         
         try {
             navigator.clipboard.writeText(this.generatedLink.value)
                 .then(() => {
-                    this.copyBtn.innerHTML = '<span class="btn-icon">✅</span> Copied!';
+                    const originalText = this.copyBtn.textContent;
+                    this.copyBtn.textContent = 'Copied';
                     setTimeout(() => {
-                        this.copyBtn.innerHTML = '<span class="btn-icon">📋</span> Copy Link';
+                        this.copyBtn.textContent = originalText;
                     }, 2000);
-                    this.showToast('📋 Link copied to clipboard!', false, 2000);
+                    this.showToast('Link copied');
                 })
                 .catch(() => {
                     this.fallbackCopy();
@@ -315,38 +340,12 @@ class TypewrittenText {
     
     fallbackCopy() {
         document.execCommand('copy');
-        this.showToast('📋 Link copied!', false, 2000);
+        this.showToast('Link copied');
     }
     
-    clearDocument() {
-        if (this.isViewingShared) {
-            // If viewing shared document, clear hash and return to editor
-            window.location.hash = '';
-            this.isViewingShared = false;
-            this.enableEditing();
-            this.viewCount.classList.add('hidden');
-            this.loadCurrentDraft();
-            this.showToast('Returned to editor', false, 2000);
-            return;
-        }
-        
-        if (confirm('Clear current document? Your draft will be saved.')) {
-            this.titleInput.value = '';
-            this.editor.innerHTML = '';
-            this.linkContainer.classList.add('hidden');
-            this.updateCounters();
-            this.updateShareButton();
-            
-            // Save empty draft
-            this.saveCurrentDraft();
-            
-            this.showToast('Document cleared', false, 2000);
-        }
-    }
-    
-    showToast(message, isError = false, duration = 3000) {
+    showToast(message, isError = false, duration = 2000) {
         this.toast.textContent = message;
-        this.toast.style.background = isError ? '#d32f2f' : '#000';
+        this.toast.style.background = isError ? '#cc0000' : '#000';
         this.toast.classList.add('show');
         
         if (this.toastTimeout) {
@@ -359,19 +358,12 @@ class TypewrittenText {
     }
 }
 
-// Initialize app when DOM is ready
+// Initialize when page loads
 document.addEventListener('DOMContentLoaded', () => {
-    const app = new TypewrittenText();
+    const app = new Typewritten();
     
-    // Handle initial load
-    setTimeout(() => {
-        app.updateCounters();
-    }, 100);
-    
-    // Prevent accidental refresh loss
-    window.addEventListener('beforeunload', (e) => {
-        if (!app.isViewingShared && app.editor.textContent.trim().length > 0) {
-            app.saveCurrentDraft();
-        }
-    });
+    // Also handle hash on initial load
+    if (window.location.hash) {
+        setTimeout(() => app.handleHashChange(), 100);
+    }
 });
