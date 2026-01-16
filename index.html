@@ -51,6 +51,10 @@
                 <button class="tool-btn" data-command="insertOrderedList" title="Numbers">
                     <span class="tool-char">1.</span>
                 </button>
+                <span class="tool-divider">|</span>
+                <button id="htmlBtn" class="tool-btn" title="HTML Code">
+                    <span class="tool-char">&lt;/&gt;</span>
+                </button>
             </div>
             
             <div id="editor" 
@@ -62,8 +66,8 @@
                 <button id="shareBtn" class="btn share-btn" disabled>
                     Create link
                 </button>
-                <button id="refreshBtn" class="btn refresh-btn">
-                    Refresh
+                <button id="previewBtn" class="btn preview-btn">
+                    Preview
                 </button>
                 <button id="clearBtn" class="btn clear-btn">
                     Clear
@@ -71,7 +75,7 @@
             </div>
 
             <div class="info">
-                <p>Auto-saved locally • Share link to publish • Refresh preserves text</p>
+                <p>HTML supported • Auto-saved locally • Share link to publish</p>
             </div>
         </main>
 
@@ -92,7 +96,7 @@
                     <button id="copyBtn" class="copy-btn">Copy</button>
                 </div>
                 <div class="link-note">
-                    <p>Note: Link works on any device. Data stored in your browser.</p>
+                    <p>Note: Link works on any device. HTML content is preserved.</p>
                 </div>
             </div>
         </div>
@@ -110,6 +114,47 @@
                 </div>
             </div>
         </footer>
+
+        <!-- HTML Code Modal -->
+        <div id="htmlModal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Insert HTML Code</h3>
+                    <button id="closeModal" class="modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <textarea id="htmlInput" 
+                              class="html-input" 
+                              placeholder="Paste your HTML code here..."><strong>Your HTML content here</strong></textarea>
+                    <div class="modal-actions">
+                        <button id="insertHtml" class="btn">Insert HTML</button>
+                        <button id="cancelHtml" class="btn cancel-btn">Cancel</button>
+                    </div>
+                    <div class="html-examples">
+                        <p class="examples-title">Quick insert:</p>
+                        <button class="example-btn" data-example="bold">Bold</button>
+                        <button class="example-btn" data-example="italic">Italic</button>
+                        <button class="example-btn" data-example="link">Link</button>
+                        <button class="example-btn" data-example="code">Code</button>
+                        <button class="example-btn" data-example="image">Image</button>
+                        <button class="example-btn" data-example="line">Line</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preview Modal -->
+        <div id="previewModal" class="modal hidden">
+            <div class="modal-content preview-modal">
+                <div class="modal-header">
+                    <h3>HTML Preview</h3>
+                    <button id="closePreview" class="modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div id="previewContent" class="preview-content"></div>
+                </div>
+            </div>
+        </div>
 
         <div id="toast" class="toast"></div>
     </div>
