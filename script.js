@@ -9,8 +9,9 @@ class Typewritten {
         this.editor = document.getElementById('editor');
         this.titleInput = document.getElementById('titleInput');
         this.shareBtn = document.getElementById('shareBtn');
-        this.refreshBtn = document.getElementById('refreshBtn');
+        this.previewBtn = document.getElementById('previewBtn');
         this.clearBtn = document.getElementById('clearBtn');
+        this.htmlBtn = document.getElementById('htmlBtn');
         this.linkContainer = document.getElementById('linkContainer');
         this.generatedLink = document.getElementById('generatedLink');
         this.copyBtn = document.getElementById('copyBtn');
@@ -20,6 +21,16 @@ class Typewritten {
         this.viewValue = document.getElementById('viewValue');
         this.viewCount = document.getElementById('viewCount');
         this.toast = document.getElementById('toast');
+        
+        // Modal elements
+        this.htmlModal = document.getElementById('htmlModal');
+        this.previewModal = document.getElementById('previewModal');
+        this.htmlInput = document.getElementById('htmlInput');
+        this.insertHtmlBtn = document.getElementById('insertHtml');
+        this.cancelHtmlBtn = document.getElementById('cancelHtml');
+        this.closeModalBtn = document.getElementById('closeModal');
+        this.closePreviewBtn = document.getElementById('closePreview');
+        this.previewContent = document.getElementById('previewContent');
         
         this.currentDocumentId = null;
         this.isViewing = false;
@@ -41,8 +52,8 @@ class Typewritten {
             this.autoSave();
         });
         
-        // Toolbar events
-        document.querySelectorAll('.tool-btn').forEach(btn => {
+        // Toolbar events (regular formatting)
+        document.querySelectorAll('.tool-btn[data-command]:not(#htmlBtn)').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
                 const command = e.currentTarget.dataset.command;
@@ -52,19 +63,36 @@ class Typewritten {
             });
         });
         
+        // HTML button
+        this.htmlBtn.addEventListener('click', () => this.openHtmlModal());
+        
         // Button events
         this.shareBtn.addEventListener('click', () => this.createLink());
-        this.refreshBtn.addEventListener('click', () => this.handleRefresh());
+        this.previewBtn.addEventListener('click', () => this.showPreview());
         this.clearBtn.addEventListener('click', () => this.handleClear());
         this.copyBtn.addEventListener('click', () => this.copyLink());
         
-        // Paste handler
-        this.editor.addEventListener('paste', (e) => {
-            e.preventDefault();
-            const text = e.clipboardData.getData('text/plain');
-            document.execCommand('insertText', false, text);
-            this.updateCounters();
-            this.autoSave();
+        // Modal events
+        this.insertHtmlBtn.addEventListener('click', () => this.insertHtmlCode());
+        this.cancelHtmlBtn.addEventListener('click', () => this.closeHtmlModal());
+        this.closeModalBtn.addEventListener('click', () => this.closeHtmlModal());
+        this.closePreviewBtn.addEventListener('click', () => this.closePreviewModal());
+        
+        // Example buttons
+        document.querySelectorAll('.example-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const example = e.currentTarget.dataset.example;
+                this.insertExample(example);
+            });
+        });
+        
+        // Close modals on outside click
+        this.htmlModal.addEventListener('click', (e) => {
+            if (e.target === this.htmlModal) this.closeHtmlModal();
+        });
+        
+        this.previewModal.addEventListener('click', (e) => {
+            if (e.target === this.previewModal) this.closePreviewModal();
         });
         
         // Handle URL hash changes
@@ -88,7 +116,16 @@ class Typewritten {
             // F5 to refresh
             if (e.key === 'F5') {
                 e.preventDefault();
-                this.handleRefresh();
+                this.refreshPage();
+            }
+            // Escape to close modals
+            if (e.key === 'Escape') {
+                if (!this.htmlModal.classList.contains('hidden')) {
+                    this.closeHtmlModal();
+                }
+                if (!this.previewModal.classList.contains('hidden')) {
+                    this.closePreviewModal();
+                }
             }
         });
     }
@@ -265,6 +302,7 @@ class Typewritten {
         this.editor.classList.add('view-mode');
         this.titleInput.disabled = true;
         this.shareBtn.disabled = true;
+        this.previewBtn.disabled = false;
         this.clearBtn.textContent = 'New document';
     }
     
@@ -273,11 +311,157 @@ class Typewritten {
         this.editor.classList.remove('view-mode');
         this.titleInput.disabled = false;
         this.shareBtn.disabled = false;
+        this.previewBtn.disabled = false;
         this.clearBtn.textContent = 'Clear';
         this.viewCount.classList.add('hidden');
     }
     
-    handleRefresh() {
+    openHtmlModal() {
+        this.htmlModal.classList.remove('hidden');
+        this.htmlInput.focus();
+        this.htmlInput.select();
+    }
+    
+    closeHtmlModal() {
+        this.htmlModal.classList.add('hidden');
+        this.htmlInput.value = '<strong>Your HTML content here</strong>';
+        this.editor.focus();
+    }
+    
+    closePreviewModal() {
+        this.previewModal.classList.add('hidden');
+        this.editor.focus();
+    }
+    
+    insertExample(example) {
+        let html = '';
+        
+        switch(example) {
+            case 'bold':
+                html = '<strong>Bold text</strong>';
+                break;
+            case 'italic':
+                html = '<em>Italic text</em>';
+                break;
+            case 'link':
+                html = '<a href="https://example.com" target="_blank">Example Link</a>';
+                break;
+            case 'code':
+                html = '<code>console.log("Hello World");</code>';
+                break;
+            case 'image':
+                html = '<img src="https://via.placeholder.com/150" alt="Placeholder Image" style="max-width:100%;height:auto;">';
+                break;
+            case 'line':
+                html = '<hr style="border:1px solid #ddd;margin:20px 0;">';
+                break;
+        }
+        
+        this.htmlInput.value = html;
+        this.htmlInput.focus();
+    }
+    
+    insertHtmlCode() {
+        const html = this.htmlInput.value.trim();
+        
+        if (!html) {
+            this.showToast('Please enter some HTML', true);
+            return;
+        }
+        
+        // Sanitize HTML
+        const sanitizedHtml = this.sanitizeHtml(html);
+        
+        // Get current selection
+        const selection = window.getSelection();
+        
+        if (selection.rangeCount > 0) {
+            const range = selection.getRangeAt(0);
+            
+            // Delete any selected text
+            range.deleteContents();
+            
+            // Create a temporary div to parse the HTML
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = sanitizedHtml;
+            
+            // Insert the nodes
+            while (tempDiv.firstChild) {
+                range.insertNode(tempDiv.firstChild);
+            }
+            
+            // Move cursor to end of inserted content
+            range.collapse(false);
+            
+            // Update selection
+            selection.removeAllRanges();
+            selection.addRange(range);
+        } else {
+            // If no selection, insert at the end
+            const range = document.createRange();
+            range.selectNodeContents(this.editor);
+            range.collapse(false);
+            
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = sanitizedHtml;
+            
+            while (tempDiv.firstChild) {
+                range.insertNode(tempDiv.firstChild);
+            }
+            
+            // Move cursor to end
+            range.collapse(false);
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+        
+        this.closeHtmlModal();
+        this.updateCounters();
+        this.autoSave();
+        this.showToast('HTML inserted');
+    }
+    
+    sanitizeHtml(html) {
+        // Create a temporary div to parse HTML
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = html;
+        
+        // Remove script tags
+        const scripts = tempDiv.getElementsByTagName('script');
+        while (scripts.length > 0) {
+            scripts[0].parentNode.removeChild(scripts[0]);
+        }
+        
+        // Remove event handlers and dangerous attributes
+        const allElements = tempDiv.querySelectorAll('*');
+        allElements.forEach(element => {
+            // Remove all on* attributes
+            for (let attr of element.attributes) {
+                if (attr.name.startsWith('on')) {
+                    element.removeAttribute(attr.name);
+                }
+            }
+            
+            // Remove javascript: from href
+            if (element.hasAttribute('href')) {
+                const href = element.getAttribute('href');
+                if (href && href.toLowerCase().startsWith('javascript:')) {
+                    element.removeAttribute('href');
+                }
+            }
+        });
+        
+        return tempDiv.innerHTML;
+    }
+    
+    showPreview() {
+        // Show preview with the HTML content
+        this.previewContent.innerHTML = this.editor.innerHTML;
+        this.previewModal.classList.remove('hidden');
+    }
+    
+    refreshPage() {
         // Save current draft before refresh
         if (!this.isViewing) {
             this.saveDraft();
